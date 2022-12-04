@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rating-service
+spec:
+  selector:
+    app: rating-deployment
+  ports:
+    - port: 9092
+      targetPort: 9092
+      nodePort: 30092
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rating-deployment
+  labels:
+    app: rating-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: rating-deployment
+      labels:
+        app: rating-deployment
+    spec:
+      containers:
+        - name: rating-deployment
+          image: ersanmaz/rating-service:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+      #restartPolicy: Always
+  selector:
+    matchLabels:
+      app: rating-deployment

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-service
+spec:
+  selector:
+    app: book-deployment
+  ports:
+    - port: 9090
+      targetPort: 9090
+      nodePort: 30090
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-deployment
+  labels:
+    app: book-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: book-deployment
+      labels:
+        app: book-deployment
+    spec:
+      containers:
+        - name: book-deployment
+          image: ersanmaz/book-service:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+      #restartPolicy: Always
+  selector:
+    matchLabels:
+      app: book-deployment
